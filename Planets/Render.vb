@@ -7,10 +7,10 @@ Public Class Render
     Inherits GameWindow
     Dim xres As Double
     Dim yres As Double
-    Dim mat_spec = New Double() {1.0, 1.0, 1.0, 1.0}
-    Dim mat_shini = New Double() {50.0}
-    Dim ambiant = New Double() {0.1484, 0.0, 0.5781}
-    Dim light_Pos = New Double() {1, 1, 1, .0}
+    Dim mat_spec = New Integer() {255, 255, 255, 255}
+    Dim mat_shini = New Integer() {50}
+    Dim ambiant = New Integer() {37, 0, 147}
+    Dim light_Pos = New Integer() {1, 1, 1, 0}
 
 
     Public Sub New(x As Integer, y As Integer)
@@ -38,6 +38,7 @@ Public Class Render
 
 
     Private Sub init()
+        Dim matPersp As Matrix4
         GL.Viewport(0, 0, xres, yres)
         GL.MatrixMode(MatrixMode.Projection)
         GL.LoadIdentity()
@@ -53,7 +54,8 @@ Public Class Render
         GL.MatrixMode(MatrixMode.Projection)
         GL.LoadIdentity()
 
-        Matrix4.CreatePerspectiveFieldOfView(45.0, xres / yres, 0.1, 900.0)
+        matPersp = Matrix4.CreatePerspectiveFieldOfView(MathHelper.PiOver4, (xres / yres), 0.1, 900.0)
+        GL.LoadMatrix(matPersp)
         GL.Material(MaterialFace.Front, MaterialParameter.Specular, mat_spec)
         GL.Material(MaterialFace.Front, MaterialParameter.Shininess, mat_shini)
 
@@ -63,5 +65,15 @@ Public Class Render
         GL.MatrixMode(MatrixMode.Modelview)
         GL.Enable(EnableCap.Lighting)
         GL.Enable(EnableCap.Light0)
+    End Sub
+
+    Sub set2D()
+        GL.Disable(EnableCap.DepthTest)
+        GL.Viewport(0, 0, xres, yres)
+        GL.MatrixMode(MatrixMode.Projection)
+        GL.LoadIdentity()
+        GL.Ortho(0, xres, 0, yres, -1, 1)
+        GL.MatrixMode(MatrixMode.Modelview)
+        GL.LoadIdentity()
     End Sub
 End Class
