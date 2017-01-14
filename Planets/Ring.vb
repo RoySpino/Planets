@@ -1,9 +1,9 @@
-Imports OpenTK
+﻿Imports OpenTK
 Imports OpenTK.Graphics.OpenGL
 Imports System
 Imports System.Runtime.InteropServices
 
-Public Class SolidSphere
+Public Class Ring
     Dim X, Y, Z, rad, gblRings, gblSectors As Double
     Dim rotx, roty, rotz As Double
     Dim vl, nl, tl As List(Of Double)
@@ -39,14 +39,14 @@ Public Class SolidSphere
         tl = New List(Of Double)()
         il = New List(Of Integer)()
 
-        For i As Integer = 0 To (rings - 1)
+        For i As Integer = 5 To 6
             For u As Integer = 0 To (sectors - 1)
-                y = Math.Sin(-MathHelper.PiOver2 + MathHelper.Pi * CDbl(i) * R)
+                y = 0 'Math.Sin(-MathHelper.PiOver2 + MathHelper.Pi * CDbl(i) * R)
                 x = Math.Sin(MathHelper.TwoPi * CDbl(u) * S) * Math.Sin(MathHelper.Pi * CDbl(i) * R)
                 z = Math.Cos(MathHelper.TwoPi * CDbl(u) * S) * Math.Sin(MathHelper.Pi * CDbl(i) * R)
 
                 tl.Add(u * S)
-                tl.Add(i * R)
+                tl.Add((i - 5) * R)
 
                 vl.Add(x * radius) 'yxz
                 vl.Add(y * radius)
@@ -58,12 +58,12 @@ Public Class SolidSphere
             Next
         Next
 
-        For i As Integer = 0 To (rings - 2)
+        For i As Integer = 5 To 5
             For u As Integer = 0 To (sectors - 2)
-                il.Add(i * sectors + u)
-                il.Add(i * sectors + (u + 1))
-                il.Add((i + 1) * sectors + (u + 1))
-                il.Add((i + 1) * sectors + u)
+                il.Add((i - 5) * sectors + u)
+                il.Add((i - 5) * sectors + (u + 1))
+                il.Add(((i + 1) - 5) * sectors + (u + 1))
+                il.Add(((i + 1) - 5) * sectors + u)
             Next
         Next
 
