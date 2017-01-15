@@ -393,6 +393,7 @@ Public Class Render
         GL.Enable(EnableCap.Light0)
     End Sub
 
+    ' ///////////////////////////////////////////////////////////////////////////////////////////////////////
     Sub setOrth()
         GL.Disable(EnableCap.DepthTest)
         GL.Viewport(0, 0, Me.Width, Me.Height)
@@ -403,6 +404,7 @@ Public Class Render
         GL.LoadIdentity()
     End Sub
 
+    ' ///////////////////////////////////////////////////////////////////////////////////////////////////////
     Sub getCamLock()
         If planID > -1 Then
             camloc(0) = -plan(planID).getX()
@@ -414,6 +416,7 @@ Public Class Render
         End If
     End Sub
 
+    ' ///////////////////////////////////////////////////////////////////////////////////////////////////////
     Sub getFramInc()
         If planID >= 0 And planetToPlanet = False Then
             CamAnimationFrame(0) = (camloc(0) - plan(planID).getX()) / 60
@@ -426,6 +429,7 @@ Public Class Render
         End If
     End Sub
 
+    ' ///////////////////////////////////////////////////////////////////////////////////////////////////////
     Function camAnimation() As Boolean
         camloc(0) += CamAnimationFrame(0)
         camloc(1) += CamAnimationFrame(1)
@@ -440,10 +444,12 @@ Public Class Render
         Return False
     End Function
 
+    ' ///////////////////////////////////////////////////////////////////////////////////////////////////////
     Sub getAge(a As Double)
         Me.age = a
     End Sub
 
+    ' ///////////////////////////////////////////////////////////////////////////////////////////////////////
     Sub getWei(w As Double)
         Me.wei = w
     End Sub
