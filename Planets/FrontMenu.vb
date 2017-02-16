@@ -22,8 +22,8 @@ Public Class FrontMenu
         welcom = New GLPrint(50)
 
         ofset = 0
-        vitex = 0 ' vitex = gettex.load("D:\Pictures\isis_VI_Welcome.png")
-        textTex = 0 'textTex = gettex.load("D:\Pictures\Consolas.png")
+        vitex = gettex.load(".\..\..\Images\VI_Nyota_Welcome.png")
+        textTex = gettex.load(".\..\..\Images\Consolas.png")
     End Sub
 
     Public Sub menu(x As Integer, y As Integer)
