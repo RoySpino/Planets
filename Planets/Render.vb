@@ -90,6 +90,7 @@ Public Class Render
         Texture.Add(getBMP.load(".\..\..\Images\Moon.png"))
         Texture.Add(getBMP.load(".\..\..\Images\Charon.png"))
         Texture.Add(getBMP.load(".\..\..\Images\Phobos.png"))
+        textTex = getBMP.load(".\..\..\Images\Consolas.png")
 
         init()
 
