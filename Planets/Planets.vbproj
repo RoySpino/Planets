@@ -77,6 +77,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Calculate.vb" />
+    <Compile Include="FrontMenu.vb" />
     <Compile Include="LoadBMP.vb" />
     <Compile Include="Module1.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
