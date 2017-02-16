@@ -69,6 +69,11 @@ Public Class GLPrint
 
     ' /////////////////////////////////////////////////////////////////////////////////////////////////////////
     Sub print(lx As Double, ly As Double, data As String)
+        ' do nothing if there is nothig to print
+        If String.IsNullOrEmpty(data) = True Then
+            Return
+        End If
+
         ' on init or new text given redraw mesh
         If localDrawString <> data And data <> Nothing Then
             localDrawString = data
