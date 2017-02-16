@@ -13,21 +13,28 @@ Public Class Render
     Dim mat_shini = New Integer() {50}
     Dim ambiant = New Integer() {37, 0, 147}
     Dim light_Pos = New Integer() {1, 1, 1, 0}
-    Dim speed As Double = 0.005
+    Dim speed As Double = 0.0009
     Dim daySpeed As Double = 0.5
-    Dim planID, prevID As Integer
+    Dim planID, prevID, textTex, enterCnt As Integer
     Dim CamAnimationFrame(3) As Double
     Dim calculon As Calculate = New Calculate()
     Dim Texture As List(Of Int32)
     Dim getBMP As LoadBMP = New LoadBMP()
-    Dim framCount As Integer
+    Dim framCount, menuX, menuY As Integer
     Dim doAnimation, planetToPlanet As Boolean
     Dim plutox, plutoY As Double
     Dim camloc(3) As Double
     Dim age, wei As Double
+    Dim rawString As String = ""
+    Dim viMessage, viMesageFormat, sunMessage As String
+    Dim calcResult As List(Of String)
+    Dim menu As FrontMenu = New FrontMenu()
 
     Dim plan As List(Of SolidSphere)
     Dim rings As List(Of Ring)
+    Dim print As GLPrint = New GLPrint(32)
+    Dim comment As GLPrint = New GLPrint(32)
+    Dim vi As Plane = New Plane(300, 300)
 
     ' ///////////////////////////////////////////////////////////////////////////////////////////////////////
     Public Sub New(w As Integer, h As Integer)
@@ -35,6 +42,7 @@ Public Class Render
         Me.X = 100
         Me.Y = 100
 
+        enterCnt = 0
         GL.ShadeModel(ShadingModel.Smooth)                               ' enable smooth shading
         GL.ClearColor(0.0F, 0.0F, 0.0F, 0.5F)                            ' black background
         GL.ClearDepth(1.0F)                                              ' depth buffer setup
@@ -61,6 +69,7 @@ Public Class Render
         plan.Add(New SolidSphere(0.1, 8, 16))
         plan.Add(New SolidSphere(0.1, 4, 8))
         plan.Add(New SolidSphere(0.08, 4, 8))
+        plan.Add(New SolidSphere(0.08, 4, 8))
 
         rings = New List(Of Ring)()
         rings.Add(New Ring(6.4, 16, 32))
@@ -83,6 +92,13 @@ Public Class Render
         Texture.Add(getBMP.load(".\..\..\Images\Phobos.png"))
 
         init()
+
+        viMesageFormat = "{0}" & vbNewLine &
+                         "On {0} you are {2} years old {3}" & vbNewLine &
+                         "   Also you weigh {1}{4}"
+
+        menuX = Me.Size.Width - 500
+        menuY = 700
     End Sub
 
     ' ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -110,116 +126,266 @@ Public Class Render
         GL.Viewport(ClientRectangle)
         GL.LoadMatrix(Matrix4.Perspective(45.0F, CDbl(Me.Width) / CDbl(Me.Height), 0.1F, 5000.0F))
         GL.MatrixMode(MatrixMode.Modelview)
+
+        menuX = Me.Size.Width - 500
+        menuY = 700
     End Sub
 
     ' ///////////////////////////////////////////////////////////////////////////////////////////////////////
     Protected Overrides Sub OnKeyDown(e As KeyboardKeyEventArgs)
         MyBase.OnKeyDown(e)
 
-        ' prevents reassignment after animation startup
-        If doAnimation = False Then
-            prevID = planID
-        End If
+        If wei = 0 Then
+            Select Case e.Key
+                Case OpenTK.Input.Key.Enter
+                    If enterCnt = 1 And rawString <> "" Then
+                        menu.SetText()
+                        Try
+                            wei = Convert.ToDouble(rawString)
+                        Catch ex As Exception
+                            menu.answerRetry()
+                        End Try
+                        rawString = ""
+                    Else
+                        If rawString <> "" Then
+                            ' send age to menu class and switch to weight
+                            menu.SetText()
+                            Try
+                                age = Convert.ToDouble(rawString)
+                            Catch ex As Exception
+                                menu.answerRetry()
+                            End Try
+                            rawString = ""
+                            enterCnt += 1
+                        End If
+                    End If
+                Case OpenTK.Input.Key.A
+                    rawString += "A"
+                Case OpenTK.Input.Key.B
+                    rawString += "B"
+                Case OpenTK.Input.Key.C
+                    rawString += "C"
+                Case OpenTK.Input.Key.D
+                    rawString += "D"
+                Case OpenTK.Input.Key.E
+                    rawString += "E"
+                Case OpenTK.Input.Key.F
+                    rawString += "F"
+                Case OpenTK.Input.Key.G
+                    rawString += "G"
+                Case OpenTK.Input.Key.H
+                    rawString += "H"
+                Case OpenTK.Input.Key.I
+                    rawString += "I"
+                Case OpenTK.Input.Key.J
+                    rawString += "J"
+                Case OpenTK.Input.Key.K
+                    rawString += "K"
+                Case OpenTK.Input.Key.L
+                    rawString += "L"
+                Case OpenTK.Input.Key.M
+                    rawString += "M"
+                Case OpenTK.Input.Key.N
+                    rawString += "N"
+                Case OpenTK.Input.Key.O
+                    rawString += "O"
+                Case OpenTK.Input.Key.P
+                    rawString += "P"
+                Case OpenTK.Input.Key.Q
+                    rawString += "Q"
+                Case OpenTK.Input.Key.R
+                    rawString += "R"
+                Case OpenTK.Input.Key.S
+                    rawString += "S"
+                Case OpenTK.Input.Key.T
+                    rawString += "T"
+                Case OpenTK.Input.Key.U
+                    rawString += "U"
+                Case OpenTK.Input.Key.V
+                    rawString += "V"
+                Case OpenTK.Input.Key.W
+                    rawString += "W"
+                Case OpenTK.Input.Key.X
+                    rawString += "X"
+                Case OpenTK.Input.Key.Y
+                    rawString += "Y"
+                Case OpenTK.Input.Key.Z
+                    rawString += "Z"
+                Case OpenTK.Input.Key.Number0
+                    rawString += "0"
+                Case OpenTK.Input.Key.Number1
+                    rawString += "1"
+                Case OpenTK.Input.Key.Number2
+                    rawString += "2"
+                Case OpenTK.Input.Key.Number3
+                    rawString += "3"
+                Case OpenTK.Input.Key.Number4
+                    rawString += "4"
+                Case OpenTK.Input.Key.Number5
+                    rawString += "5"
+                Case OpenTK.Input.Key.Number6
+                    rawString += "6"
+                Case OpenTK.Input.Key.Number7
+                    rawString += "7"
+                Case OpenTK.Input.Key.Number8
+                    rawString += "8"
+                Case OpenTK.Input.Key.Number9
+                    rawString += "9"
+                Case OpenTK.Input.Key.Period
+                    rawString += "."
+                Case OpenTK.Input.Key.BackSpace
+                    If rawString.Length > 0 Then
+                        rawString = rawString.Substring(0, rawString.Length - 1)
+                    End If
+                Case OpenTK.Input.Key.Escape
+                    Me.Exit()
+            End Select
 
-        Select Case e.Key
-            Case OpenTK.Input.Key.Escape
-                Me.Exit()
-            Case OpenTK.Input.Key.Q
-                If speed - 0.01 > 2 Then
-                    speed += 0.01
-                    daySpeed += 0.01
-                Else
-                    speed += 0.01
-                    daySpeed += 0.01
-                End If
-            Case OpenTK.Input.Key.A
-                If speed - 0.01 > 0 Then
-                    speed -= 0.01
-                    daySpeed -= 0.01
-                Else
-                    speed -= 0.0001
-                    daySpeed -= 0.0001
-                End If
-            Case OpenTK.Input.Key.Plus
-                camloc(2) += 1
-            Case OpenTK.Input.Key.Minus
-                camloc(2) -= 1
+            menu.userInput(rawString)
+        Else
 
-            Case OpenTK.Input.Key.Number1
-                calculon.calc(0, wei, age)
-                planID = 1
-                'camloc(2) = plan(1).getRad() * -5
-                getFramInc()
-                doAnimation = True
-            Case OpenTK.Input.Key.Number2
-                calculon.calc(0, wei, age)
-                planID = 2
-                'camloc(2) = plan(2).getRad() * -5
-                getFramInc()
-                doAnimation = True
-            Case OpenTK.Input.Key.Number3
-                calculon.calc(0, wei, age)
-                planID = 3
-                'camloc(2) = plan(3).getRad() * -5
-                getFramInc()
-                doAnimation = True
-            Case OpenTK.Input.Key.Number4
-                calculon.calc(0, wei, age)
-                planID = 4
-                'camloc(2) = plan(4).getRad() * -5
-                getFramInc()
-                doAnimation = True
-            Case OpenTK.Input.Key.Number5
-                calculon.calc(0, wei, age)
-                planID = 5
-                'camloc(2) = plan(5).getRad() * -5
-                getFramInc()
-                doAnimation = True
-            Case OpenTK.Input.Key.Number6
-                calculon.calc(0, wei, age)
-                planID = 6
-                'camloc(2) = plan(6).getRad() * -5
-                getFramInc()
-                doAnimation = True
-            Case OpenTK.Input.Key.Number7
-                calculon.calc(0, wei, age)
-                planID = 7
-                'camloc(2) = plan(7).getRad() * -5
-                getFramInc()
-                doAnimation = True
-            Case OpenTK.Input.Key.Number8
-                calculon.calc(0, wei, age)
-                planID = 8
-                'camloc(2) = plan(8).getRad() * -5
-                getFramInc()
-                doAnimation = True
-            Case OpenTK.Input.Key.Number9
-                calculon.calc(0, wei, age)
-                planID = 9
-                'camloc(2) = plan(9).getRad() * -5
-                getFramInc()
-                doAnimation = True
-            Case OpenTK.Input.Key.L
-                calculon.calc(0, wei, age)
-                planID = 10
-                'camloc(2) = plan(10).getRad() * -5
-                getFramInc()
-                doAnimation = True
-            Case OpenTK.Input.Key.K
-                calculon.calc(0, wei, age)
-                planID = 11
-                'camloc(2) = plan(10).getRad() * -5
-                getFramInc()
-                doAnimation = True
-            Case OpenTK.Input.Key.B
-                planID = -1
-                getFramInc()
-                doAnimation = True
-        End Select
 
-        If planID >= 0 And prevID >= 0 Then
-            planetToPlanet = True
-            getFramInc()
+            ' prevents reassignment after animation startup
+            If doAnimation = False Then
+                prevID = planID
+            End If
+
+            Select Case e.Key
+                Case OpenTK.Input.Key.Escape
+                    Me.Exit()
+                Case OpenTK.Input.Key.Q
+                    If speed - 0.01 > 2 Then
+                        speed += 0.01
+                        daySpeed += 0.01
+                    Else
+                        speed += 0.01
+                        daySpeed += 0.01
+                    End If
+                Case OpenTK.Input.Key.A
+                    If speed - 0.01 > 0 Then
+                        speed -= 0.01
+                        daySpeed -= 0.01
+                    Else
+                        speed -= 0.0001
+                        daySpeed -= 0.0001
+                    End If
+                Case OpenTK.Input.Key.Plus
+                    camloc(2) += 1
+                Case OpenTK.Input.Key.Minus
+                    camloc(2) -= 1
+
+                Case OpenTK.Input.Key.Number1
+                    planID = 1
+                    calcResult = calculon.calc(planID, wei, age)
+                    'camloc(2) = plan(1).getRad() * -5
+                    getFramInc()
+                    doAnimation = True
+                    viMessage = String.Format(viMesageFormat, calcResult(0), calcResult(1), calcResult(2), calcResult(3), calcResult(4))
+                Case OpenTK.Input.Key.Number2
+                    planID = 2
+                    calcResult = calculon.calc(planID, wei, age)
+                    'camloc(2) = plan(2).getRad() * -5
+                    getFramInc()
+                    doAnimation = True
+                    viMessage = String.Format(viMesageFormat, calcResult(0), calcResult(1), calcResult(2), calcResult(3), calcResult(4))
+                Case OpenTK.Input.Key.Number3
+                    planID = 3
+                    calcResult = calculon.calc(planID, wei, age)
+                    'camloc(2) = plan(3).getRad() * -5
+                    getFramInc()
+                    doAnimation = True
+
+                    viMessage = "Earth" & vbNewLine &
+                            "on Earth, well if you dont already know " & vbNewLine &
+                            "   this, what did you enter for your age" & vbNewLine &
+                            "   and weight?"
+                Case OpenTK.Input.Key.Number4
+                    planID = 4
+                    calcResult = calculon.calc(planID, wei, age)
+                    'camloc(2) = plan(4).getRad() * -5
+                    getFramInc()
+                    doAnimation = True
+                    viMessage = String.Format(viMesageFormat, calcResult(0), calcResult(1), calcResult(2), calcResult(3), calcResult(4))
+                Case OpenTK.Input.Key.Number5
+                    planID = 5
+                    calcResult = calculon.calc(planID, wei, age)
+                    'camloc(2) = plan(5).getRad() * -5
+                    getFramInc()
+                    doAnimation = True
+                    viMessage = String.Format(viMesageFormat, calcResult(0), calcResult(1), calcResult(2), calcResult(3), calcResult(4))
+                Case OpenTK.Input.Key.Number6
+                    planID = 6
+                    calcResult = calculon.calc(planID, wei, age)
+                    'camloc(2) = plan(6).getRad() * -5
+                    getFramInc()
+                    doAnimation = True
+                    viMessage = String.Format(viMesageFormat, calcResult(0), calcResult(1), calcResult(2), calcResult(3), calcResult(4))
+                Case OpenTK.Input.Key.Number7
+                    planID = 7
+                    calcResult = calculon.calc(planID, wei, age)
+                    'camloc(2) = plan(7).getRad() * -5
+                    getFramInc()
+                    doAnimation = True
+                    viMessage = String.Format(viMesageFormat, calcResult(0), calcResult(1), calcResult(2), calcResult(3), calcResult(4))
+                Case OpenTK.Input.Key.Number8
+                    planID = 8
+                    calcResult = calculon.calc(planID, wei, age)
+                    'camloc(2) = plan(8).getRad() * -5
+                    getFramInc()
+                    doAnimation = True
+                    viMessage = String.Format(viMesageFormat, calcResult(0), calcResult(1), calcResult(2), calcResult(3), calcResult(4))
+                Case OpenTK.Input.Key.Number9
+                    planID = 9
+                    calcResult = calculon.calc(planID, wei, age)
+                    'camloc(2) = plan(9).getRad() * -5
+                    getFramInc()
+                    doAnimation = True
+                    viMessage = String.Format(viMesageFormat, calcResult(0), calcResult(1), calcResult(2), calcResult(3), calcResult(4))
+                Case OpenTK.Input.Key.Number0
+                    planID = 0
+                    calcResult = calculon.calc(planID, wei, age)
+                    'camloc(2) = plan(9).getRad() * -5
+                    getFramInc()
+                    If Convert.ToDouble(calcResult(2)) > 1 Then
+                        sunMessage = vbNewLine & "   Woah, ok now I know your lying to me."
+                    Else
+                        sunMessage = vbNewLine & "   Oh my, you really let yourself go."
+                    End If
+                    doAnimation = True
+                    viMessage = String.Format("Sol" & vbNewLine &
+                            "   on The Sun you are: {0} years old" & vbNewLine &
+                            "   also you weight: {1} {2}", calcResult(2), calcResult(1), sunMessage)
+                Case OpenTK.Input.Key.L
+                    planID = 10
+                    calcResult = calculon.calc(planID, wei, age)
+                    'camloc(2) = plan(10).getRad() * -5
+                    getFramInc()
+                    doAnimation = True
+                    viMessage = String.Format(viMesageFormat, calcResult(0), calcResult(1), calcResult(2), calcResult(3), calcResult(4))
+                Case OpenTK.Input.Key.K
+                    planID = 11
+                    calcResult = calculon.calc(planID, wei, age)
+                    'camloc(2) = plan(10).getRad() * -5
+                    getFramInc()
+                    doAnimation = True
+                    viMessage = String.Format(viMesageFormat, calcResult(0), calcResult(1), calcResult(2), calcResult(3), calcResult(4))
+                Case OpenTK.Input.Key.J
+                    planID = 14
+                    calcResult = calculon.calc(planID, wei, age)
+                    'camloc(2) = plan(10).getRad() * -5
+                    getFramInc()
+                    doAnimation = True
+                    viMessage = String.Format(viMesageFormat, calcResult(0), calcResult(1), calcResult(2), calcResult(3), calcResult(4))
+                Case OpenTK.Input.Key.B
+                    planID = -1
+                    getFramInc()
+                    doAnimation = True
+            End Select
+
+            If planID >= 0 And prevID >= 0 Then
+                planetToPlanet = True
+                getFramInc()
+            End If
         End If
     End Sub
 
@@ -231,8 +397,19 @@ Public Class Render
         GL.ClearColor(Color.Black)
 
 
+        ' start planetary calculator
         GL.MatrixMode(MatrixMode.Modelview)
         GL.LoadIdentity()
+
+
+        ' show only opening menu to get age and weight
+        If age <= 0 Or wei <= 0 Then
+            setOrth()
+            menu.menu(Me.Size.Width, Me.Size.Height)
+            Me.SwapBuffers()
+            Return
+        End If
+
 
         GL.Translate(camloc(0), camloc(1), camloc(2))
 
@@ -347,6 +524,13 @@ Public Class Render
         plan(13).draw(1.1 * Math.Cos(rquad * 545.21) + plan(4).getX(), -1.1 * Math.Sin(rquad * 545.21) + plan(4).getY, 0)
         GL.BindTexture(TextureTarget.Texture2D, 0)
 
+        ' hallys comet
+        'GL.Color3(0.3F, 0.3F, 0.3F)
+        GL.BindTexture(TextureTarget.Texture2D, Texture(12))
+        plan(14).rot(0, (rtri * 0.1443), 0)
+        plan(14).draw(165 * Math.Cos(rquad * 0.011901) - 132, -33 * Math.Sin(rquad * 0.011901), 0)
+        GL.BindTexture(TextureTarget.Texture2D, 0)
+
         If doAnimation = False Then
             getCamLock()
             rquad += speed
@@ -359,6 +543,33 @@ Public Class Render
             End If
         End If
 
+        setOrth()
+        GL.BindTexture(TextureTarget.Texture2D, textTex)
+        print.print(menuX, menuY,
+                 "Planetary Calculater" & vbNewLine &
+                    "  1) go to Mercury" & vbNewLine &
+                    "  2) go to Venus" & vbNewLine &
+                    "  3) go to Earth" & vbNewLine &
+                    "  4) go to Mars" & vbNewLine &
+                    "  5) go to Juptier" & vbNewLine &
+                    "  6) go to Saturn" & vbNewLine &
+                    "  7) go to Uranus" & vbNewLine &
+                    "  8) go to Neptune" & vbNewLine &
+                    "  9) go to Pluto" & vbNewLine &
+                    "  l) go to Luna" & vbNewLine &
+                    "  k) go to charon" & vbNewLine &
+                    "  l) go to Hallys commet" & vbNewLine &
+                    "  0) go to Sol" & vbNewLine &
+                    "  b) go back")
+
+        comment.print(350, 200, viMessage)
+        GL.BindTexture(TextureTarget.Texture2D, 0)
+
+        GL.BindTexture(TextureTarget.Texture2D, 0)
+        'vi.draw(30, Me.Size.Height - 350, 0)
+        GL.BindTexture(TextureTarget.Texture2D, 0)
+
+        init()
         Me.SwapBuffers()
     End Sub
 
@@ -371,14 +582,17 @@ Public Class Render
         GL.MatrixMode(MatrixMode.Modelview)
         GL.LoadIdentity()
 
+        GL.Enable(EnableCap.DepthTest)
         GL.Enable(EnableCap.Texture2D)
         GL.Enable(EnableCap.Blend)
+        GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha)
         GL.ClearColor(Color.Black)
         GL.ClearDepth(1.0)
         GL.DepthFunc(DepthFunction.Lequal)
         GL.ShadeModel(ShadingModel.Smooth)
         GL.MatrixMode(MatrixMode.Projection)
         GL.LoadIdentity()
+
 
         matPersp = Matrix4.CreatePerspectiveFieldOfView(MathHelper.PiOver4, (Me.Width / Me.Height), 0.1, 900.0)
         GL.LoadMatrix(matPersp)
@@ -393,7 +607,6 @@ Public Class Render
         GL.Enable(EnableCap.Light0)
     End Sub
 
-    ' ///////////////////////////////////////////////////////////////////////////////////////////////////////
     Sub setOrth()
         GL.Disable(EnableCap.DepthTest)
         GL.Viewport(0, 0, Me.Width, Me.Height)
@@ -404,7 +617,6 @@ Public Class Render
         GL.LoadIdentity()
     End Sub
 
-    ' ///////////////////////////////////////////////////////////////////////////////////////////////////////
     Sub getCamLock()
         If planID > -1 Then
             camloc(0) = -plan(planID).getX()
@@ -416,7 +628,6 @@ Public Class Render
         End If
     End Sub
 
-    ' ///////////////////////////////////////////////////////////////////////////////////////////////////////
     Sub getFramInc()
         If planID >= 0 And planetToPlanet = False Then
             CamAnimationFrame(0) = (camloc(0) - plan(planID).getX()) / 60
@@ -429,7 +640,6 @@ Public Class Render
         End If
     End Sub
 
-    ' ///////////////////////////////////////////////////////////////////////////////////////////////////////
     Function camAnimation() As Boolean
         camloc(0) += CamAnimationFrame(0)
         camloc(1) += CamAnimationFrame(1)
@@ -444,12 +654,10 @@ Public Class Render
         Return False
     End Function
 
-    ' ///////////////////////////////////////////////////////////////////////////////////////////////////////
     Sub getAge(a As Double)
         Me.age = a
     End Sub
 
-    ' ///////////////////////////////////////////////////////////////////////////////////////////////////////
     Sub getWei(w As Double)
         Me.wei = w
     End Sub
